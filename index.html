@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Phone on the Desk Study</title>
+<title>Phone on the Desk</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap">
@@ -129,6 +129,10 @@ select.wrong, input.wrong { border-color: var(--bad); background: var(--bad-bg);
 .flip .tag.plus { color: var(--good); }
 .flip .tag.minus { color: var(--bad); }
 .flip .more { color: var(--muted); font-size: .95rem; }
+.coins { display: flex; flex-wrap: wrap; gap: .4rem; min-height: 2.6rem; }
+.coin { width: 2.4rem; height: 2.4rem; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-num); font-weight: 600; font-size: 1rem; border: 2px solid var(--sage); }
+.coin.h { background: var(--sage); color: var(--surface); }
+.coin.t { background: var(--surface); color: var(--sage); }
 footer { font-size: .9rem; color: var(--muted); display: grid; gap: .4rem; }
 @media (max-width: 30rem) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .decode-row { grid-template-columns: 4.2rem 1fr; } }
 @media (prefers-reduced-motion: no-preference) { .fb, .model { animation: rise .25s ease-out; } @keyframes rise { from { transform: translateY(4px); opacity: .6; } to { transform: none; opacity: 1; } } }
@@ -169,7 +173,18 @@ footer { font-size: .9rem; color: var(--muted); display: grid; gap: .4rem; }
 </section>
 
 <section class="step" aria-labelledby="s3">
-  <div class="step-head"><span class="step-no">3</span><h2 id="s3">What did they find?</h2></div>
+  <div class="step-head"><span class="step-no">3</span><h2 id="s3">How big can chance gaps be?</h2></div>
+  <div class="panel">
+    <p>Flip 10 coins. Then compare with the person next to you. The coin is the same for everyone, so any difference between you is pure chance.</p>
+    <div class="btns"><button class="btn" id="flip" type="button">Flip 10 coins</button><button class="btn ghost" id="flip-reset" type="button">Clear</button></div>
+    <div class="coins" id="coins" aria-live="polite"></div>
+    <p id="flip-msg" class="muted">No flips yet.</p>
+    <p class="note">This is sampling variability. H0 says the phone study’s gap of 1.13 is just this kind of wobble.</p>
+  </div>
+</section>
+
+<section class="step" aria-labelledby="s4">
+  <div class="step-head"><span class="step-no">4</span><h2 id="s4">What did they find?</h2></div>
   <div class="panel">
     <div class="legend"><span class="key"><span class="sw" style="background:var(--slate)"></span>Phone out of sight · <span class="num">M = 14.21, SD = 2.61</span></span><span class="key"><span class="sw" style="background:var(--sage)"></span>Phone on the desk · <span class="num">M = 13.08, SD = 2.53</span></span></div>
     <svg class="chart" id="overlap" viewBox="0 0 640 260" role="img" aria-label="Two overlapping bell curves for recall score. The phone-out-of-sight curve is centred at 14.21 and the phone-on-desk curve at 13.08. They overlap heavily."></svg>
@@ -183,8 +198,30 @@ footer { font-size: .9rem; color: var(--muted); display: grid; gap: .4rem; }
   </div>
 </section>
 
-<section class="step" aria-labelledby="s4">
-  <div class="step-head"><span class="step-no">4</span><h2 id="s4">Signal and noise: play with the study</h2></div>
+<section class="step" aria-labelledby="s5">
+  <div class="step-head"><span class="step-no">5</span><h2 id="s5">If H0 were true: build the pile</h2></div>
+  <div class="panel">
+    <p>Imagine phones make <strong>no</strong> difference. Rerun the study with 119 new students, randomly split 58 and 61, and work out <em>t</em> each time. Every rerun drops one <em>t</em> onto the pile.</p>
+    <div class="btns">
+      <button class="btn" id="run1" type="button">Run 1</button>
+      <button class="btn" id="run10" type="button">Run 10</button>
+      <button class="btn" id="run100" type="button">Run 100</button>
+      <button class="btn" id="run1000" type="button">Run 1,000</button>
+      <button class="btn ghost" id="pile-reset" type="button">Reset</button>
+    </div>
+    <div class="stats" aria-live="polite">
+      <div class="stat"><span class="v" id="p-runs">0</span><span class="k">reruns</span></div>
+      <div class="stat"><span class="v" id="p-last">–</span><span class="k">last <em>t</em></span></div>
+      <div class="stat"><span class="v" id="p-out">0</span><span class="k">beyond ±2.38</span></div>
+      <div class="stat"><span class="v" id="p-pct">–</span><span class="k">% beyond</span></div>
+    </div>
+    <svg class="chart" id="pile" viewBox="0 0 640 260" role="img" aria-label="A histogram of t values from simulated reruns with no real effect, with lines at plus and minus 2.38."></svg>
+    <p id="pile-msg" class="note">Press a button to start. Try Run 1 a few times first, then Run 1,000.</p>
+  </div>
+</section>
+
+<section class="step" aria-labelledby="s6">
+  <div class="step-head"><span class="step-no">6</span><h2 id="s6">Signal and noise: play with the study</h2></div>
   <div class="panel">
     <p>The sliders start at Tanil and Yong’s numbers. Change them and watch <em>t</em>, <em>p</em> and <em>d</em> respond.</p>
     <div class="sim-grid">
@@ -211,10 +248,10 @@ footer { font-size: .9rem; color: var(--muted); display: grid; gap: .4rem; }
   </div>
 </section>
 
-<section class="step" aria-labelledby="s5">
-  <div class="step-head"><span class="step-no">5</span><h2 id="s5">Build the APA write-up</h2></div>
+<section class="step" aria-labelledby="s7">
+  <div class="step-head"><span class="step-no">7</span><h2 id="s7">Build the APA write-up</h2></div>
   <div class="panel">
-    <p>Fill in the blanks using the numbers in steps 3 and 4. Two decimal places, and use APA rules for <em>p</em>.</p>
+    <p>Fill in the blanks using the numbers in step 4. Two decimal places, and use APA rules for <em>p</em>.</p>
     <p class="apa" id="apa">Participants whose phone was out of sight recalled more items (<em>M</em> = <input type="text" id="a1" inputmode="decimal" aria-label="Mean, phone out of sight">, <em>SD</em> = <input type="text" id="a2" inputmode="decimal" aria-label="SD, phone out of sight">) than those whose phone was on the desk (<em>M</em> = <input type="text" id="a3" inputmode="decimal" aria-label="Mean, phone on desk">, <em>SD</em> = <input type="text" id="a4" inputmode="decimal" aria-label="SD, phone on desk">), <em>t</em>(<input type="text" id="a5" inputmode="numeric" aria-label="Degrees of freedom">) = <input type="text" id="a6" inputmode="decimal" aria-label="t value">, <em>p</em> = <input type="text" id="a7" inputmode="decimal" aria-label="p value">, <em>d</em> = <input type="text" id="a8" inputmode="decimal" aria-label="Cohen's d">.</p>
     <div class="btns"><button class="btn" id="check" type="button">Check my write-up</button><button class="btn ghost" id="show" type="button">Show the model answer</button></div>
     <div id="apa-fb"></div>
@@ -225,8 +262,8 @@ footer { font-size: .9rem; color: var(--muted); display: grid; gap: .4rem; }
   </div>
 </section>
 
-<section class="step" aria-labelledby="s6">
-  <div class="step-head"><span class="step-no">6</span><h2 id="s6">Read it critically</h2></div>
+<section class="step" aria-labelledby="s8">
+  <div class="step-head"><span class="step-no">8</span><h2 id="s8">Read it critically</h2></div>
   <div class="panel">
     <p>Tap each card. Which strength and which limitation would you mention in a reflection?</p>
     <div class="flips" id="flips"></div>
@@ -404,7 +441,7 @@ footer { font-size: .9rem; color: var(--muted); display: grid; gap: .4rem; }
       if (a.id === "a7") {
         if (raw === "0.019" || raw === "0.02") notes.push("p: APA drops the zero before the decimal point, because p can never be above 1.");
         else if (raw === ".02") { notes.push("p: the paper says .02, but give three decimals when you have them: .019."); }
-        else if (!ok) notes.push("p: check step 3. Three decimals, no leading zero.");
+        else if (!ok) notes.push("p: check step 4. Three decimals, no leading zero.");
       } else if (a.id === "a8" && raw === ".44") notes.push("d: keep the zero (0.44). Unlike p, d can be bigger than 1.");
       else if (a.id === "a5" && raw === "119") notes.push("df: that’s N. For an independent t-test, df = N − 2.");
       else if (a.id === "a6" && raw.startsWith("-")) notes.push("t: the sign only reflects which group was entered first. Report it positive here, with the direction stated in words.");
@@ -436,7 +473,71 @@ footer { font-size: .9rem; color: var(--muted); display: grid; gap: .4rem; }
     fl.appendChild(b);
   });
 
-  function drawAll() { overlap(); sim(); }
+  // ---------- Coins ----------
+  const coinFlips = [];
+  $("flip").addEventListener("click", () => {
+    const res = Array.from({ length: 10 }, () => Math.random() < 0.5);
+    const heads = res.filter(Boolean).length; coinFlips.push(heads);
+    $("coins").innerHTML = res.map((h) => `<span class="coin ${h ? "h" : "t"}" aria-label="${h ? "heads" : "tails"}">${h ? "H" : "T"}</span>`).join("");
+    const mean = coinFlips.reduce((a, b) => a + b, 0) / coinFlips.length;
+    $("flip-msg").innerHTML = `<strong>${heads} heads.</strong> Your flips so far: ${coinFlips.join(", ")} (average ${mean.toFixed(1)}). Did your neighbour get the same?`;
+  });
+  $("flip-reset").addEventListener("click", () => { coinFlips.length = 0; $("coins").innerHTML = ""; $("flip-msg").textContent = "No flips yet."; });
+
+  // ---------- Build the pile ----------
+  const PN1 = 58, PN2 = 61, PSD = 2.57, PDF = PN1 + PN2 - 2, TOBS = 2.38, EDGES = [];
+  for (let e = -4.75; e <= 4.751; e += 0.25) EDGES.push(+e.toFixed(2));
+  const counts = new Array(EDGES.length - 1).fill(0);
+  let runs = 0, out = 0, lastT = null, spare = null;
+  function randn() { if (spare !== null) { const v = spare; spare = null; return v; } let u = 0, v = 0; while (u === 0) u = Math.random(); v = Math.random(); const r = Math.sqrt(-2 * Math.log(u)); spare = r * Math.sin(2 * Math.PI * v); return r * Math.cos(2 * Math.PI * v); }
+  function oneT() {
+    let s1 = 0, q1 = 0, s2 = 0, q2 = 0;
+    for (let i = 0; i < PN1; i++) { const x = randn() * PSD; s1 += x; q1 += x * x; }
+    for (let i = 0; i < PN2; i++) { const x = randn() * PSD; s2 += x; q2 += x * x; }
+    const m1 = s1 / PN1, m2 = s2 / PN2, v1 = (q1 - PN1 * m1 * m1) / (PN1 - 1), v2 = (q2 - PN2 * m2 * m2) / (PN2 - 1);
+    const sp2 = ((PN1 - 1) * v1 + (PN2 - 1) * v2) / PDF;
+    return (m1 - m2) / Math.sqrt(sp2 * (1 / PN1 + 1 / PN2));
+  }
+  function addRuns(k) {
+    for (let i = 0; i < k; i++) {
+      const t = oneT(); lastT = t; runs++; if (Math.abs(t) >= TOBS) out++;
+      const b = Math.floor((Math.max(-4.749, Math.min(4.749, t)) + 4.75) / 0.25); counts[b]++;
+    }
+    drawPile();
+  }
+  function drawPile() {
+    $("p-runs").textContent = runs.toLocaleString("en-GB");
+    $("p-last").textContent = lastT === null ? "–" : lastT.toFixed(2);
+    $("p-out").textContent = out;
+    $("p-pct").textContent = runs ? (100 * out / runs).toFixed(1) : "–";
+    const svg = $("pile"), W = Math.max(300, Math.round(svg.parentElement.clientWidth - 36)), H = 260, L = 12, R = 12, T = 34, B = 44;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const sx = (x) => L + (x + 4.75) / 9.5 * (W - L - R);
+    const maxC = Math.max(4, ...counts), curveMax = runs >= 50 ? tpdf(0, PDF) * runs * 0.25 : 0, ymax = Math.max(maxC, curveMax) * 1.1;
+    const sy = (y) => H - B - y / ymax * (H - T - B);
+    const sage = css("--sage"), mint = css("--mint"), slate = css("--slate"), ink = css("--ink");
+    let g = "";
+    counts.forEach((c, i) => {
+      if (!c) return;
+      const x0 = sx(EDGES[i]) + 1, x1 = sx(EDGES[i + 1]) - 1, mid = (EDGES[i] + EDGES[i + 1]) / 2;
+      g += `<rect x="${x0.toFixed(1)}" y="${sy(c).toFixed(1)}" width="${(x1 - x0).toFixed(1)}" height="${(sy(0) - sy(c)).toFixed(1)}" fill="${Math.abs(mid) >= TOBS - 0.1 ? sage : mint}"/>`;
+    });
+    if (runs >= 50) { let p = ""; for (let x = -4.75; x <= 4.75; x += 0.05) p += `${p ? "L" : "M"}${sx(x).toFixed(1)},${sy(tpdf(x, PDF) * runs * 0.25).toFixed(1)}`; g += `<path d="${p}" fill="none" stroke="${ink}" stroke-width="2.5"/>`; }
+    g += `<line class="axis" x1="${L}" y1="${sy(0)}" x2="${W - R}" y2="${sy(0)}" stroke-width="1.5"/>`;
+    [-4, -2, 0, 2, 4].forEach((v) => g += `<text class="tick" x="${sx(v)}" y="${sy(0) + 20}" text-anchor="middle">${v}</text>`);
+    [-TOBS, TOBS].forEach((v) => g += `<line x1="${sx(v)}" y1="${T - 8}" x2="${sx(v)}" y2="${sy(0)}" stroke="${slate}" stroke-width="3"/>`);
+    g += `<text x="${sx(TOBS) + 6}" y="${T + 4}" font-size="14" font-weight="700" fill="${slate}">our t = 2.38</text>`;
+    g += `<text x="${(L + W - R) / 2}" y="${H - 4}" text-anchor="middle" font-size="14">t from each rerun (no real effect)</text>`;
+    svg.innerHTML = g;
+    const msg = $("pile-msg");
+    if (!runs) msg.textContent = "Press a button to start. Try Run 1 a few times first, then Run 1,000.";
+    else if (runs < 50) msg.textContent = "Each rerun has no real effect, yet t is rarely exactly 0. That’s chance at work.";
+    else msg.innerHTML = `${out} of ${runs.toLocaleString("en-GB")} reruns (${(100 * out / runs).toFixed(1)}%) gave a t at least as extreme as 2.38. The theory says 1.9%: that’s <em>p</em> = .019. The curve is the t distribution.`;
+  }
+  ["run1", "run10", "run100", "run1000"].forEach((id) => $(id).addEventListener("click", () => addRuns(+id.slice(3))));
+  $("pile-reset").addEventListener("click", () => { counts.fill(0); runs = 0; out = 0; lastT = null; drawPile(); });
+
+  function drawAll() { overlap(); sim(); drawPile(); }
   drawAll();
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawAll);
   let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(drawAll, 150); });
