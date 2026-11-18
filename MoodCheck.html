@@ -277,17 +277,24 @@ async function submit(){
   else if (!/^https:\/\/script\.google\.com\//.test(ENDPOINT)){
     fb.className = "fb bad"; fb.textContent = "This form hasn't been connected to the data sheet yet. Please tell the lecturer.";
   } else {
-    await wait(Math.random() * 2500);            // spread a room's worth of submissions out a little
-    for (let attempt = 0; attempt < 6 && !ok; attempt++){
+    await wait(Math.random() * 2000);            // spread a room's worth of submissions out a little
+    let why = "";
+    const TRIES = 5;
+    for (let attempt = 0; attempt < TRIES && !ok; attempt++){
+      if (attempt){ fb.className = "fb"; fb.textContent = `The room is busy: trying again (${attempt + 1} of ${TRIES})…`; }
+      const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 15000);
       try {
-        const res = await fetch(ENDPOINT, { method: "POST", body: JSON.stringify(payload) });
-        const j = await res.json();
-        ok = !!j.ok;
-        if (!ok && j.error === "bad values") break;
-      } catch (e) { /* network or busy: retry */ }
-      if (!ok) await wait(1500 * Math.pow(1.7, attempt) + Math.random() * 1500);
+        const res = await fetch(ENDPOINT, { method: "POST", body: JSON.stringify(payload), signal: ctl.signal });
+        const txt = await res.text();
+        let j = null; try { j = JSON.parse(txt); } catch (_) {}
+        if (!j) why = `reply was not data (HTTP ${res.status}): the script may need redeploying with access set to Anyone`;
+        else { ok = !!j.ok; if (!ok) why = j.error || "unknown"; }
+        if (j && j.error === "bad values") break;
+      } catch (e) { why = e.name === "AbortError" ? "no reply after 15 s" : "couldn't reach the server (" + e.message + ")"; }
+      clearTimeout(t);
+      if (!ok && attempt < TRIES - 1) await wait(1200 * Math.pow(1.6, attempt) + Math.random() * 1200);
     }
-    if (!ok){ fb.className = "fb bad"; fb.textContent = "Couldn't send just now. Your ratings are still here: please press Submit again in a moment."; }
+    if (!ok){ fb.className = "fb bad"; fb.innerHTML = "Couldn't send just now. Your ratings are still here: please press Submit again in a moment.<br><small>Details for the lecturer: " + why.replace(/</g, "&lt;") + "</small>"; }
   }
   sending = false;
   if (ok) go("done");
