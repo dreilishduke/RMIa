@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maths task · RMIa Week 9</title>
+<style>
+:root{ --bg:#1C2E33; --ink:#FFFFFF; --soft:#C9DAD4; --accent:#E2B867; --stop:#F2917C; }
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:Inter,"Segoe UI",Aptos,system-ui,sans-serif;display:grid;grid-template-rows:auto 1fr auto;text-align:center;overflow:hidden}
+.task{padding:4vh 4vw 0;font-size:clamp(1.4rem,3.6vw,3rem);font-weight:700;line-height:1.25}
+.task small{display:block;font-size:.55em;font-weight:400;color:var(--soft);margin-top:.6em}
+.mid{grid-row:2;display:grid;place-items:center;align-content:center;gap:2vh}
+#time{font-size:clamp(5rem,22vw,17rem);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1}
+#prompt{min-height:1.3em;font-size:clamp(1.5rem,4.5vw,3.6rem);font-weight:800;color:var(--accent);opacity:0;transition:opacity .4s}
+#prompt.show{opacity:1}
+.end{display:none;gap:2vh}
+.end h2{margin:0;font-size:clamp(2.5rem,8vw,6.5rem);color:var(--stop)}
+.end p{margin:0;font-size:clamp(1.3rem,3vw,2.4rem);color:var(--soft)}
+.end .code{font-size:clamp(4rem,15vw,12rem);font-weight:800;letter-spacing:.12em;color:var(--ink);line-height:1}
+body.finished .task,body.finished #time,body.finished #prompt{display:none}
+body.finished .end{display:grid}
+.keys{grid-row:3;padding:1.2vh 2vw;font-size:clamp(.8rem,1.2vw,1rem);color:var(--soft);display:flex;gap:1.5em;justify-content:center;flex-wrap:wrap}
+.keys button{font:inherit;color:var(--soft);background:transparent;border:1px solid #3F5A60;border-radius:8px;padding:.3em .8em;cursor:pointer}
+.ready #time{color:var(--soft)}
+</style>
+</head>
+<body class="ready">
+<div class="task">Count backwards from 1,022 in steps of 13
+  <small>Write each answer down as fast as you can. Make a mistake? Start again from 1,022.</small></div>
+<div class="mid">
+  <div id="time" aria-live="off">5:00</div>
+  <div id="prompt" aria-live="assertive"></div>
+  <div class="end" aria-live="assertive">
+    <h2>Stop. Pens down.</h2>
+    <p>Type this code on your phone, then rate how you feel</p>
+    <div class="code">MAPLE</div>
+  </div>
+</div>
+<div class="keys">
+  <button id="bStart">Space: start / pause</button>
+  <button id="bFull">F: full screen</button>
+  <button id="bReset">R: reset</button>
+</div>
+<script>
+const TOTAL = 5 * 60, EVERY = 45;          // seconds
+const PROMPTS = ["Faster, please", "Mistake? Back to 1,022", "Keep going: faster", "Faster, please", "Mistake? Back to 1,022", "Faster, please"];
+let left = TOTAL, running = false, timer = null, hideT = null;
+const $ = id => document.getElementById(id);
+const fmt = s => Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+function draw(){ $("time").textContent = fmt(left); }
+function prompt(text){
+  const p = $("prompt"); p.textContent = text; p.classList.add("show");
+  clearTimeout(hideT); hideT = setTimeout(() => p.classList.remove("show"), 6000);
+}
+function tick(){
+  left--; draw();
+  const elapsed = TOTAL - left;
+  if (left > 0 && elapsed % EVERY === 0) prompt(PROMPTS[(elapsed / EVERY - 1) % PROMPTS.length]);
+  if (left <= 0){ stop(); document.body.classList.add("finished"); }
+}
+function start(){ if (left <= 0) return; running = true; document.body.classList.remove("ready"); timer = setInterval(tick, 1000); }
+function stop(){ running = false; clearInterval(timer); }
+function toggle(){ running ? stop() : start(); }
+function reset(){ stop(); left = TOTAL; draw(); $("prompt").classList.remove("show"); document.body.className = "ready"; }
+function full(){
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+  else document.exitFullscreen && document.exitFullscreen();
+}
+document.addEventListener("keydown", e => {
+  if (e.code === "Space"){ e.preventDefault(); toggle(); }
+  else if (e.key === "f" || e.key === "F") full();
+  else if (e.key === "r" || e.key === "R") reset();
+});
+$("bStart").onclick = toggle; $("bFull").onclick = full; $("bReset").onclick = reset;
+draw();
+</script>
+</body>
+</html>
