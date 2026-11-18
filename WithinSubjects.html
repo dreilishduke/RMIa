@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Do my participants change over time? · RMIa Lecture 8</title>
+<meta name="description" content="RMIa Lecture 8 activity: within-subjects designs, the paired t-test and repeated-measures ANOVA.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1E2A2E; --head:#2C4A52; --a1:#46717E; --a2:#2F5D50; --a3:#3B7368; --grey:#55636A;
+  --mint:#CFE3DA; --pale:#EEF4F1; --bg:#FFFFFF; --line:#C9D6D0;
+  --nat:#2F5D50; --urb:#46717E; --ind:#8A6A3B;
+  --ok:#2F5D50; --okbg:#DDEFE5; --no:#8A3B2E; --nobg:#F6E3DF;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 Inter,"Segoe UI",Aptos,system-ui,sans-serif}
+header{background:var(--head);color:#fff;padding:28px 16px 24px}
+header .wrap,main{max-width:760px;margin:0 auto}
+header h1{margin:6px 0 6px;font-size:1.7rem;line-height:1.2}
+header p{margin:0;opacity:.92}
+.pill{display:inline-block;background:var(--a1);color:#fff;border-radius:999px;padding:3px 12px;font-weight:700;font-size:.85rem}
+main{padding:12px 16px 48px}
+nav.steps{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}
+nav.steps a{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--pale);color:var(--head);font-weight:700;text-decoration:none;border:2px solid var(--line)}
+nav.steps a.done{background:var(--a2);color:#fff;border-color:var(--a2)}
+section.step{border:1px solid var(--line);border-radius:14px;padding:18px 16px;margin:18px 0;background:#fff}
+section.step>h2{margin:0 0 4px;font-size:1.3rem;color:var(--head);display:flex;gap:10px;align-items:center}
+.num{flex:none;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--a2);color:#fff;font-size:1rem}
+.lead{color:var(--grey);margin:0 0 12px}
+.q{background:var(--pale);border-radius:10px;padding:12px;margin:12px 0}
+.q>p{margin:0 0 8px;font-weight:600}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+button.opt{font:inherit;border:2px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:8px 12px;cursor:pointer;text-align:left;min-height:44px}
+button.opt:hover{border-color:var(--a1)}
+button.opt.right{background:var(--okbg);border-color:var(--ok)}
+button.opt.wrong{background:var(--nobg);border-color:var(--no)}
+.fb{margin-top:8px;font-size:.95rem;min-height:0}
+.fb.ok{color:var(--ok)} .fb.bad{color:var(--no)}
+.fb:empty{display:none}
+.card{background:var(--mint);border-radius:10px;padding:12px;margin:12px 0}
+.study{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.study div{border-radius:10px;padding:10px;color:#fff;font-weight:700;text-align:center}
+.study small{display:block;font-weight:400;opacity:.95}
+label.sl{display:block;margin:12px 0 2px;font-weight:600}
+input[type=range]{width:100%;accent-color:var(--a2);height:32px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.stats div{background:var(--pale);border-radius:10px;padding:8px;text-align:center}
+.stats b{display:block;font-size:1.25rem;color:var(--head)}
+.stats span{font-size:.85rem;color:var(--grey)}
+.verdict{border-radius:10px;padding:10px 12px;font-weight:600}
+.verdict.sig{background:var(--okbg);color:var(--ok)} .verdict.ns{background:var(--nobg);color:var(--no)}
+svg{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin:6px 0;font-weight:700;font-size:.95rem}
+.chal{list-style:none;padding:0;margin:8px 0}
+.chal li{padding:8px 10px;border-radius:8px;background:var(--pale);margin:6px 0}
+.chal li.met{background:var(--okbg)}
+.chal li.met::before{content:"✓ ";color:var(--ok);font-weight:700}
+.apa{font-size:1.5rem;text-align:center;margin:8px 0 12px;color:var(--head)}
+.match{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 10px;align-items:center}
+.match select{width:100%}
+.match .tok{font-weight:700;color:var(--head);background:var(--mint);border-radius:8px;padding:6px 10px;text-align:center}
+select{font:inherit;border:2px solid var(--line);border-radius:8px;padding:6px 8px;background:#fff;color:var(--ink);max-width:100%;min-height:44px}
+select.right{border-color:var(--ok);background:var(--okbg)} select.wrong{border-color:var(--no);background:var(--nobg)}
+.sentence{line-height:2.4}
+.sentence select{font-size:.95rem;padding:2px 4px;min-height:36px}
+button.go{font:inherit;font-weight:700;background:var(--a2);color:#fff;border:0;border-radius:10px;padding:10px 16px;cursor:pointer;margin-top:10px;min-height:44px}
+button.go.alt{background:var(--a1)}
+.bars{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:end;height:160px;margin:10px 0 4px}
+.bars div{border-radius:8px 8px 0 0;color:#fff;font-weight:700;text-align:center;padding-top:6px}
+.barlab{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;font-size:.9rem;color:var(--grey)}
+footer{max-width:760px;margin:0 auto;padding:0 16px 40px;color:var(--grey);font-size:.9rem}
+@media (max-width:520px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  header h1{font-size:1.45rem}
+  .apa{font-size:1.2rem}
+}
+</style>
+<style>
+.t3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.t3 div{border-radius:10px;padding:10px;color:#fff;font-weight:700;text-align:center;background:var(--a2)}
+.t3 small{display:block;font-weight:400;opacity:.95}
+.toggle{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.toggle button{font:inherit;border:2px solid var(--line);background:#fff;color:var(--head);border-radius:999px;padding:6px 14px;cursor:pointer;min-height:44px;font-weight:700}
+.toggle button[aria-pressed="true"]{background:var(--a2);border-color:var(--a2);color:#fff}
+.vb{display:flex;height:46px;border-radius:8px;overflow:hidden;margin:4px 0 2px}
+.vb div{display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;transition:flex-grow .25s}
+.vb .tm{background:var(--a2)} .vb .er{background:var(--ind)} .vb .pp{background:repeating-linear-gradient(45deg,#fff 0 6px,#E9DCC6 6px 12px);color:var(--ind);border:2px dashed var(--ind)}
+.vblab{font-size:.92rem;color:var(--grey);margin-top:10px}
+.pred{font-weight:600}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <span class="pill">RMIa · Lecture 8</span>
+  <h1>Do my participants change over time?</h1>
+  <p>Follow along with the lecture, step by step. Nothing you enter here is collected or saved.</p>
+</div></header>
+
+<main>
+<nav class="steps" aria-label="Steps">
+  <a href="#s1" id="n1">1</a><a href="#s2" id="n2">2</a><a href="#s3" id="n3">3</a><a href="#s4" id="n4">4</a>
+  <a href="#s5" id="n5">5</a><a href="#s6" id="n6">6</a><a href="#s7" id="n7">7</a>
+</nav>
+
+<div class="card">
+  <strong>The data.</strong> Made-up data in exactly the design of our in-class experiment: 60 people each rated their arousal (1 = calm, 9 = wound-up) three times. Your class's real ratings are for Lab 8.
+</div>
+<div class="t3" aria-hidden="true">
+  <div>T1<small>Baseline</small></div>
+  <div>T2<small>After the maths task</small></div>
+  <div>T3<small>After relaxing</small></div>
+</div>
+
+<!-- STEP 1 -->
+<section class="step" id="s1">
+  <h2><span class="num">1</span>Same people, two time points</h2>
+  <p class="lead">First, a guess. What will arousal do over the three time points?</p>
+  <div class="q"><p>Your prediction</p>
+    <div class="opts" id="pred"></div>
+    <div class="fb ok" id="predfb"></div></div>
+  <p class="lead" style="margin-top:14px">Now just two time points, for 12 people: baseline and after the task. Switch between the two views.</p>
+  <div class="toggle" role="group" aria-label="View">
+    <button type="button" id="vGroups" aria-pressed="true">Treat as two groups</button>
+    <button type="button" id="vLinks" aria-pressed="false">Link each person</button>
+  </div>
+  <svg id="pairs" viewBox="0 0 360 230" role="img" aria-label="Arousal for 12 people at baseline and after the task"></svg>
+  <p class="fb ok" id="pairtxt"></p>
+  <div id="q1"></div>
+</section>
+
+<!-- STEP 2 -->
+<section class="step" id="s2">
+  <h2><span class="num">2</span>The hypotheses</h2>
+  <p class="lead"><strong>RQ:</strong> Does arousal change across the three time points?</p>
+  <div id="q2"></div>
+</section>
+
+<!-- STEP 3 -->
+<section class="step" id="s3">
+  <h2><span class="num">3</span>The logic: take out people</h2>
+  <p class="lead">Here are the made-up means. Was your prediction right?</p>
+  <svg id="means" viewBox="0 0 360 200" role="img" aria-label="Mean arousal: baseline 4.32, after task 5.47, after relaxing 3.83"></svg>
+  <p class="lead" style="margin-top:12px"><strong>F = time ÷ error.</strong> With the same people at every time point, we can take out each person's usual level ("some people are always more wound-up") before working out the error. How much that helps depends on how <em>consistent</em> people are. Move the slider.</p>
+  <label class="sl" for="r">How consistent are people across the three ratings? <span id="rv"></span></label>
+  <input type="range" id="r" min="0" max="0.8" step="0.05" value="0.4">
+  <div class="vblab">Different people at each time point</div>
+  <div class="vb"><div class="tm" id="b1t">Time</div><div class="er" id="b1e">Error</div></div>
+  <div class="vblab">Same people at every time point</div>
+  <div class="vb"><div class="tm" id="b2t">Time</div><div class="pp" id="b2p">People: taken out</div><div class="er" id="b2e">Error</div></div>
+  <div class="stats" style="grid-template-columns:repeat(2,1fr)">
+    <div><b id="fig">–</b><span>F if these were different people</span></div>
+    <div><b id="frm">–</b><span>F for the same people</span></div>
+  </div>
+  <p id="rtxt" class="fb ok"></p>
+  <div id="q3"></div>
+</section>
+
+<!-- STEP 4 -->
+<section class="step" id="s4">
+  <h2><span class="num">4</span>Sphericity and Mauchly's test</h2>
+  <p class="lead">Sphericity: for every pair of time points, work out each person's change. Are those changes about equally spread out? Mauchly's test checks this, and tells you which row of the output to read.</p>
+  <div id="q4"></div>
+</section>
+
+<!-- STEP 5 -->
+<section class="step" id="s5">
+  <h2><span class="num">5</span>Decode the result</h2>
+  <p class="lead">Mauchly's <em>W</em> = .72, χ²(2) = 18.86, <em>p</em> &lt; .001, so these are the Greenhouse-Geisser values:</p>
+  <p class="apa"><em>F</em>(1.57, 92.36) = 24.33, <em>p</em> &lt; .001, η<sub>p</sub>² = .29</p>
+  <p class="lead">Match each number to what it means.</p>
+  <div class="match" id="match"></div>
+  <button class="go" type="button" id="checkMatch">Check my matches</button>
+  <p class="fb" id="matchfb"></p>
+  <div id="q5"></div>
+</section>
+
+<!-- STEP 6 -->
+<section class="step" id="s6">
+  <h2><span class="num">6</span>Spot the problem</h2>
+  <p class="lead">Each design has a flaw. Which one?</p>
+  <div id="q6"></div>
+</section>
+
+<!-- STEP 7 -->
+<section class="step" id="s7">
+  <h2><span class="num">7</span>Which test do I run?</h2>
+  <p class="lead">Pick the test for each design.</p>
+  <div id="q7"></div>
+  <div class="card" id="fin" hidden><strong>All seven steps done.</strong> In Lab 8 you'll run the repeated-measures ANOVA on the class's real ratings.</div>
+</section>
+</main>
+<footer>ILLUSTRATIVE: all numbers on this page are made up, in the same design as our in-class experiment. RMIa, Leeds Beckett University.</footer>
+
+<script>
+// ---------- generic MCQ (as in the Lecture 7 page) ----------
+const done = new Set();
+function markStep(n){ done.add(n); document.getElementById('n'+n)?.classList.add('done'); if (done.size === 7) document.getElementById('fin').hidden = false; }
+function mcq(container, items, step){
+  const root = document.getElementById(container);
+  let solved = 0;
+  items.forEach((it) => {
+    const q = document.createElement('div'); q.className = 'q';
+    const p = document.createElement('p'); p.innerHTML = it.q; q.appendChild(p);
+    const opts = document.createElement('div'); opts.className = 'opts';
+    const fb = document.createElement('div'); fb.className = 'fb'; fb.setAttribute('aria-live','polite');
+    let got = false;
+    it.o.forEach((o, i) => {
+      const b = document.createElement('button'); b.className = 'opt'; b.type = 'button'; b.innerHTML = o;
+      b.onclick = () => {
+        const right = i === it.a;
+        b.classList.add(right ? 'right' : 'wrong');
+        fb.className = 'fb ' + (right ? 'ok' : 'bad');
+        fb.innerHTML = (right ? '✓ ' : '✗ ') + ((it.f && it.f[i]) || (right ? it.why : 'Not quite. Try again.'));
+        if (right && !got){ got = true; solved++; if (solved === items.length && step) markStep(step); }
+      };
+      opts.appendChild(b);
+    });
+    q.appendChild(opts); q.appendChild(fb); root.appendChild(q);
+  });
+}
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, text){ const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; return e; }
+
+// ---------- Step 1: prediction ----------
+const PRED = ['A: up after the task, back down after relaxing','B: up after the task, and stays up','C: no real change','D: down after the task'];
+let myPred = null;
+PRED.forEach((t, i) => {
+  const b = document.createElement('button'); b.className = 'opt'; b.type = 'button'; b.textContent = t;
+  b.onclick = () => {
+    document.querySelectorAll('#pred .opt').forEach(x => x.classList.remove('right'));
+    b.classList.add('right'); myPred = i;
+    document.getElementById('predfb').textContent = 'Noted. You\'ll see the made-up data in Step 3, and the class\'s real data in Lab 8.';
+  };
+  document.getElementById('pred').appendChild(b);
+});
+
+// ---------- Step 1: two views of 12 people ----------
+const P = [[2,4],[3,4],[3,6],[4,6],[4,5],[5,7],[5,4],[6,8],[6,8],[7,9],[8,7],[8,9]];
+const svg = document.getElementById('pairs');
+function drawPairs(linked){
+  svg.innerHTML = '';
+  const X0 = 110, X1 = 250, y = v => 205 - (v - 1) * 23;
+  for (let v = 1; v <= 9; v += 2){
+    svg.appendChild(el('line', {x1:60, x2:320, y1:y(v), y2:y(v), stroke:'#E3EAE6'}));
+    svg.appendChild(el('text', {x:52, y:y(v)+4, 'text-anchor':'end', 'font-size':12, fill:'#55636A'}, v));
+  }
+  svg.appendChild(el('text', {x:X0, y:226, 'text-anchor':'middle', 'font-size':13, fill:'#1E2A2E'}, 'Baseline'));
+  svg.appendChild(el('text', {x:X1, y:226, 'text-anchor':'middle', 'font-size':13, fill:'#1E2A2E'}, 'After task'));
+  const jit = i => ((i * 37) % 11 - 5) * 3;
+  P.forEach((pr, i) => {
+    const xa = linked ? X0 : X0 + jit(i), xb = linked ? X1 : X1 + jit(i + 3);
+    if (linked){
+      const up = pr[1] > pr[0];
+      svg.appendChild(el('line', {x1:xa, y1:y(pr[0]), x2:xb, y2:y(pr[1]), stroke: up ? '#2F5D50' : '#8A6A3B', 'stroke-width':2, opacity:.85}));
+    }
+    svg.appendChild(el('circle', {cx:xa, cy:y(pr[0]), r:5.5, fill:'#46717E', stroke:'#fff', 'stroke-width':1.5}));
+    svg.appendChild(el('circle', {cx:xb, cy:y(pr[1]), r:5.5, fill:'#8A6A3B', stroke:'#fff', 'stroke-width':1.5}));
+  });
+  if (!linked){
+    const m0 = P.reduce((a, p) => a + p[0], 0) / 12, m1 = P.reduce((a, p) => a + p[1], 0) / 12;
+    svg.appendChild(el('line', {x1:X0-32, x2:X0+32, y1:y(m0), y2:y(m0), stroke:'#1E2A2E', 'stroke-width':3}));
+    svg.appendChild(el('line', {x1:X1-32, x2:X1+32, y1:y(m1), y2:y(m1), stroke:'#1E2A2E', 'stroke-width':3}));
+  }
+  const ups = P.filter(p => p[1] > p[0]).length;
+  document.getElementById('pairtxt').textContent = linked
+    ? `Now the change is clear: ${ups} of the 12 lines go up. Each person is compared with themselves, so it doesn't matter that some started at 2 and some at 8.`
+    : 'The averages (black lines) go up a little, but people differ a lot from each other (from 2 to 8 at baseline), so the two clouds overlap.';
+  vGroups.setAttribute('aria-pressed', !linked); vLinks.setAttribute('aria-pressed', linked);
+}
+const vGroups = document.getElementById('vGroups'), vLinks = document.getElementById('vLinks');
+vGroups.onclick = () => drawPairs(false); vLinks.onclick = () => drawPairs(true);
+drawPairs(false);
+
+mcq('q1', [
+  {q:'1. Which test compares the SAME people at two time points?', o:['Independent t-test','Paired-samples t-test','One-way ANOVA'], a:1,
+   why:'Same people, two time points: the paired t-test. (Wilcoxon signed-rank if the changes aren\'t roughly normal.)',
+   f:['That\'s for two groups of DIFFERENT people (Week 7).', null, 'That\'s for three or more groups of different people (Week 8).']},
+  {q:'2. A paired t-test works on…', o:['each group\'s mean','each person\'s change (after − before)','the biggest score'], a:1,
+   why:'It averages the changes and asks whether that average change is further from 0 than chance would produce.',
+   f:['The independent t-test compares group means. The paired test uses each person\'s change.', null, 'No: every person\'s change counts.']},
+  {q:'3. Same means, but the paired t is bigger than the independent t. Why?', o:['The paired test uses more people','People\'s usual level cancels out when each person is compared with themselves','The paired test uses a smaller cut-off for p'], a:1,
+   why:'Someone who is always fairly wired is wired at both time points, so that cancels out. Less noise, bigger t.',
+   f:['It\'s the same 12 people. If anything, the df are smaller.', null, 'The cut-off is still .05.']},
+], 1);
+
+// ---------- Step 2 ----------
+mcq('q2', [
+  {q:'Which is H0?', o:['Mean arousal is the same at all three time points','Arousal is highest after the task','Mean arousal differs between at least two time points'], a:0,
+   why:'H0 says "no change": T1 = T2 = T3 in the population.', f:[null,'That\'s a specific prediction, not "no change".','That\'s H1.']},
+  {q:'Which H1 fits a repeated-measures ANOVA?', o:['A: Arousal is highest after the task','B: Mean arousal differs between at least two time points','C: Arousal differs at every time point'], a:1,
+   why:'Like last week: a significant F says something changed somewhere. Post-hoc tests say where.',
+   f:['Too specific: the ANOVA doesn\'t test which time point is highest.', null, 'Too strong: the ANOVA would be significant even if only ONE time point stood out.']},
+  {q:'Hypotheses are about…', o:['our 60 people','the population they come from'], a:1,
+   why:'We use the sample to make an inference about the population.', f:['We can see our sample\'s means already. The hypotheses are about the population.', null]},
+], 2);
+
+// ---------- Step 3: means chart ----------
+(function(){
+  const s = document.getElementById('means'), M = [4.32, 5.47, 3.83], SD = [1.71, 1.69, 1.67];
+  const L = ['Baseline','After task','After relaxing'], x = i => 80 + i * 110, y = v => 175 - (v - 1) * 20;
+  for (let v = 1; v <= 9; v += 2){ s.appendChild(el('line',{x1:40,x2:340,y1:y(v),y2:y(v),stroke:'#E3EAE6'})); s.appendChild(el('text',{x:32,y:y(v)+4,'text-anchor':'end','font-size':12,fill:'#55636A'},v)); }
+  s.appendChild(el('polyline',{points:M.map((m,i)=>`${x(i)},${y(m)}`).join(' '),fill:'none',stroke:'#2F5D50','stroke-width':3}));
+  M.forEach((m,i) => {
+    s.appendChild(el('circle',{cx:x(i),cy:y(m),r:6,fill:'#2F5D50',stroke:'#fff','stroke-width':2}));
+    s.appendChild(el('text',{x:x(i),y:y(m)-12,'text-anchor':'middle','font-size':13,'font-weight':700,fill:'#1E2A2E'},m.toFixed(2)));
+    s.appendChild(el('text',{x:x(i),y:196,'text-anchor':'middle','font-size':12,fill:'#55636A'},L[i]));
+  });
+})();
+
+// ---------- Step 3: consistency slider ----------
+// Built from the made-up data: n = 60, 3 time points, SS(time) = 85, average variance at each time point = 2.856.
+const n = 60, k = 3, SST = 85, VAR = 2.856, WITHIN = (n - 1) * VAR * k;
+const r = document.getElementById('r');
+function upR(){
+  const c = +r.value;
+  const ssP = (n - 1) * VAR * (1 + (k - 1) * c), ssE = WITHIN - ssP;
+  const fIG = (SST / (k - 1)) / (WITHIN / (n * k - k));
+  const fRM = (SST / (k - 1)) / (ssE / ((n - 1) * (k - 1)));
+  const tot = SST + WITHIN;
+  document.getElementById('b1t').style.flex = SST / tot; document.getElementById('b1e').style.flex = WITHIN / tot;
+  document.getElementById('b2t').style.flex = SST / tot; document.getElementById('b2p').style.flex = ssP / tot; document.getElementById('b2e').style.flex = ssE / tot;
+  document.getElementById('fig').textContent = fIG.toFixed(1);
+  document.getElementById('frm').textContent = fRM.toFixed(1);
+  const lab = c < .15 ? 'not at all' : c < .35 ? 'a little' : c < .55 ? 'moderately' : 'very';
+  document.getElementById('rv').textContent = `(${lab})`;
+  document.getElementById('rtxt').textContent = c < .15
+    ? 'If people aren\'t consistent at all, there\'s nothing stable to take out: the same-people F is no bigger.'
+    : `The more consistent people are, the bigger the "people" chunk taken out, the smaller the error, and the bigger F. Our made-up data sit around "moderately" (F = 24.33).`;
+}
+r.oninput = upR; upR();
+mcq('q3', [{q:'So why is a within-subjects design more powerful?', o:['It always has more people','Each person\'s usual level is taken out of the error','It uses a different formula for F'], a:1,
+  why:'Same time effect on top, smaller error underneath, bigger F. That\'s why you need fewer people (as long as they\'re fairly consistent).',
+  f:['Usually it has FEWER people.', null, 'F is still time ÷ error. The error is just smaller.']}], 3);
+
+// ---------- Step 4 ----------
+mcq('q4', [
+  {q:'Mauchly\'s test: <em>p</em> &lt; .001. Which row do you read?', o:['Sphericity Assumed','Greenhouse-Geisser'], a:1,
+   why:'Significant Mauchly means sphericity is violated, so read the Greenhouse-Geisser row. Its df have decimals: that\'s normal.',
+   f:['Mauchly is significant, so sphericity is violated: don\'t assume it.', null]},
+  {q:'Mauchly\'s test: <em>p</em> = .21. Which row?', o:['Sphericity Assumed','Greenhouse-Geisser'], a:0,
+   why:'No evidence that sphericity is violated, so read the Sphericity Assumed row.', f:[null,'Mauchly isn\'t significant here, so there\'s no evidence of a problem.']},
+  {q:'Why was sphericity never an issue for the paired t-test?', o:['With two time points there\'s only one set of changes','The paired t-test is always robust','Mauchly\'s test only works in SPSS'], a:0,
+   why:'Sphericity compares the spread of the changes for every pair of time points. With two time points there\'s only one pair, so nothing to compare.',
+   f:[null,'The reason is simpler: there\'s nothing to compare.','That\'s not the reason.']},
+  {q:'Mauchly\'s test is a bit like which test from Week 7?', o:['Shapiro-Wilk','Levene\'s test','Chi-square'], a:1,
+   why:'Like Levene\'s, it doesn\'t answer your research question: it tells you which row of the output to read.',
+   f:['Shapiro-Wilk is about normality.', null, 'Chi-square is for two categorical variables.']},
+], 4);
+
+// ---------- Step 5: match ----------
+const TOK = ['1.57','92.36','24.33','< .001','.29'];
+const MEAN = ['A: time variation ÷ error','B: df for error (corrected)','C: how likely an F this big would be if H0 were true','D: df for time (corrected)','E: share of variation explained by time, with people set aside'];
+const ANS = [3, 1, 0, 2, 4];
+const WHY = ['(3 − 1) × ε, where ε = .78','(60 − 1) × (3 − 1) × ε','well above 1','below .05, so reject H0','partial eta squared, ηp²'];
+const mroot = document.getElementById('match');
+TOK.forEach((t, i) => {
+  const tok = document.createElement('div'); tok.className = 'tok'; tok.textContent = t;
+  const sel = document.createElement('select'); sel.id = 'm' + i; sel.setAttribute('aria-label', 'Meaning of ' + t);
+  sel.appendChild(new Option('Choose…', ''));
+  MEAN.forEach((m, j) => sel.appendChild(new Option(m, j)));
+  mroot.appendChild(tok); mroot.appendChild(sel);
+});
+document.getElementById('checkMatch').onclick = () => {
+  let right = 0;
+  TOK.forEach((t, i) => {
+    const s = document.getElementById('m' + i), ok = s.value !== '' && +s.value === ANS[i];
+    s.className = s.value === '' ? '' : ok ? 'right' : 'wrong'; if (ok) right++;
+  });
+  const fb = document.getElementById('matchfb');
+  if (right === 5){
+    fb.className = 'fb ok';
+    fb.innerHTML = '✓ All five. ' + TOK.map((t, i) => `<strong>${t}</strong>: ${WHY[i]}`).join(' · ') + '. Uncorrected, the df would be 2 and 118.';
+    s5a = true; if (s5b) markStep(5);
+  } else { fb.className = 'fb bad'; fb.textContent = `${right} of 5 right so far. Green ones are correct: try the red ones again.`; }
+};
+let s5a = false, s5b = false;
+mcq('q5', [
+  {q:'The F is significant. How do you find out WHICH time points differ?', o:['Games-Howell post-hocs','Bonferroni-corrected pairwise comparisons','Run three separate paired t-tests at .05'], a:1,
+   why:'For repeated measures, SPSS offers Bonferroni-corrected pairwise comparisons. Here all three pairs differ: relaxing took people below where they started.',
+   f:['Games-Howell is for independent groups (Week 8).', null, 'Three uncorrected tests push the false-alarm risk to about 14%.']},
+  {q:'Can you compare ηp² = .29 directly with last week\'s ω²?', o:['Yes, they\'re both effect sizes','No: ηp² here has people taken out first, so it tends to come out larger'], a:1,
+   why:'Because people\'s differences are removed first, ηp² in within-subjects designs tends to be bigger. Treat the benchmarks as a rough guide.',
+   f:['They\'re worked out differently, so they aren\'t on the same footing.', null]},
+], null);
+// mark step 5 when the match AND both questions are done
+(function(){
+  let n5 = 0; document.querySelectorAll('#q5 .opt').forEach(b => b.addEventListener('click', () => {
+    const solved = document.querySelectorAll('#q5 .fb.ok').length;
+    if (solved === 2){ s5b = true; if (s5a) markStep(5); }
+  }));
+})();
+
+// ---------- Step 6 ----------
+const PROB = ['Time is confounded','Order effects','Attrition (drop-out)','Demand characteristics'];
+mcq('q6', [
+  {q:'1. Students rate their stress before and after a week using a mindfulness app. Stress falls. The app worked?', o:PROB, a:0,
+   why:'Before-and-after with no comparison group: anything else that changed that week (a deadline passing, the weather) could explain it. Add a control group.'},
+  {q:'2. Everyone tastes three crisps in the same order: plain, salted, cheese. Cheese is liked most. Best flavour?', o:PROB, a:1,
+   why:'Cheese always came last, straight after salt. Counterbalance the order.'},
+  {q:'3. Wellbeing is measured in Weeks 1, 6 and 12. By Week 12, 40% have stopped responding. Wellbeing looks higher.', o:PROB, a:2,
+   why:'If the least happy people stopped responding, the Week 12 average looks better than it really is.'},
+  {q:'4. Participants are told: "This task is designed to make you feel stressed." Then they rate their stress.', o:PROB, a:3,
+   why:'Tell people what you expect and some will give it to you. (We did this too: why might that be hard to avoid ethically?)'},
+], 6);
+
+// ---------- Step 7 ----------
+const TESTS = ['Paired-samples t-test','Wilcoxon signed-rank','Repeated-measures ANOVA','Friedman test','Welch\'s ANOVA'];
+mcq('q7', [
+  {q:'Same people rate their mood before and after a film. The changes look roughly normal.', o:TESTS, a:0, why:'Same people, two time points, roughly normal changes.'},
+  {q:'Same people rate their energy at 9am, 12pm, 3pm and 6pm. Histograms look roughly normal.', o:TESTS, a:2, why:'Same people, four time points, roughly normal. Then let Mauchly pick the row.'},
+  {q:'Same people rate three adverts. The histograms are clearly skewed.', o:TESTS, a:3, why:'Same people, three conditions, not normal: Friedman, with Wilcoxon follow-ups (Bonferroni α = .017).'},
+  {q:'Three DIFFERENT groups of students each watch one advert and rate it.', o:TESTS, a:4, why:'Different people in each group: back to Week 8.',
+   f:[null,null,'The repeated-measures ANOVA needs the SAME people in every condition.','Friedman needs the SAME people in every condition.',null]},
+], 7);
+</script>
+</body>
+</html>
